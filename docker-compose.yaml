@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17
+    container_name: baseDatos_franquicias
+    restart: always
+    environment:
+      POSTGRES_DB: franquiciasDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: jasson
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: ./apiFranquicias
+    container_name: apiFranquicias
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SPRING_R2DBC_URL: r2dbc:postgresql://db:5432/franquiciasDB
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: jasson
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
